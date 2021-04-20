@@ -79,16 +79,37 @@ module Enumerable
       return size
     end
 
-    def my_map
-      if block_given?
-        map_array = []
-        for i in 0..size-1
-            map_array.push(yield(at(i)))
+    def my_inject(args = 0)
+        result = at(args)
+        for i in args + 1..size - 1
+          result = yield(result,at(i)) 
         end
-        return map_array
-      end
-      return self
+        return result
     end
+
+    def my_map(args = nil)
+        if block_given?
+            map_array = []
+            for i in 0..size-1
+                map_array.push(yield(at(i)))
+            end
+            return map_array
+        else
+          my_proc = args
+          map_array = []
+          for i in 0..size-1
+            map_array.push(my_proc.call(at(i)))
+          end
+          return map_array
+        end
+        return self
+      end
+
+   
+end
+
+def multiply_els(array)
+  array.my_inject {|multi,n| multi * n}
 end
 
 [1,2,3].my_each { |element|  p element }
@@ -100,3 +121,5 @@ puts [1, 2, 3].my_any? {|element| element == 3}
 puts [1, 2, 3].my_none? {|element| element == 0}
 puts [1, 2, 4, 4].my_count {|element| element % 2 == 0}
 puts [1, 2, 4, 4].my_map {|element| element * 2}
+puts [1, 2, 4, 4].my_inject {|sum,n| sum + n}
+puts multiply_els([1, 2, 4, 4])
