@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Module Enumerable
 module Enumerable
   def my_each
     i = 0
@@ -22,20 +23,12 @@ module Enumerable
     my_each { |item| selected << item if yield(item) }
     selected
   end
-  
+
   def my_all?
     if block_given?
-      i = 0
-      while i < size
-        unless yield(at(i)) then return false end
-        i += 1
-      end
+      my_each { |item| return false unless yield(item) }
     else
-      i = 0
-      while i < size
-        unless at(i) then return false end
-        i += 1
-      end
+      my_each { |item| return false unless item }
     end
     true
   end
@@ -85,13 +78,12 @@ module Enumerable
   end
 
   def my_map(args = nil)
+    map_array = []
     if block_given?
-      map_array = []
       my_each { |item| map_array << yield(item) }
       return map_array
-    elsif args != nil
+    elsif !args.nil?
       my_proc = args
-      map_array = []
       my_each { |item| map_array << my_proc.call(item) }
       return map_array
     end
@@ -102,5 +94,3 @@ end
 def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
 end
-
-puts [1, 2, 4, 4].my_map
