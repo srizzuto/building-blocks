@@ -2,8 +2,10 @@
 
 module Enumerable
   def my_each
-    for i in 0..size - 1
+    i = 0
+    while i < size
       yield(at(i))
+      i += 1
     end
   end
 
