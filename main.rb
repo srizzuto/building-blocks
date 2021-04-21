@@ -19,14 +19,10 @@ module Enumerable
 
   def my_select
     selected = []
-    i = 0
-    while i < size
-      selected.push(yield(at(i)))
-      i += 1
-    end
+    my_each { |item| selected << item if yield(item) }
     selected
   end
-
+  
   def my_all?
     if block_given?
       i = 0
@@ -47,17 +43,9 @@ module Enumerable
   def my_any?
     unless empty?
       if block_given?
-        i = 0
-        while i < size
-          if yield(at(i)) then return true end
-          i += 1
-        end
+        my_each { |item| return true if yield(item) }
       else
-        i = 0
-        while i < size
-          if at(i) then return true end
-          i += 1
-        end
+        my_each { |item| return true if item }
       end
     end
     false
@@ -66,17 +54,9 @@ module Enumerable
   def my_none?
     unless empty?
       if block_given?
-        i = 0
-        while i < size
-          if yield(at(i)) then return false end
-          i += 1
-        end
+        my_each { |item| return false if yield(item) }
       else
-        i = 0
-        while i < size
-          if at(i) then return false end
-          i += 1
-        end
+        my_each { |item| return false if item }
       end
     end
     true
@@ -85,18 +65,10 @@ module Enumerable
   def my_count(args = nil)
     counter = 0
     if block_given?
-      i = 0
-      while i < size
-        if yield(at(i)) then counter += 1 end
-        i += 1
-      end
+      my_each { |item| counter += 1 if yield(item) }
       return counter
     elsif !args.nil?
-      i = 0
-      while i < size
-        if at(i) == args then counter += 1 end
-        i += 1
-      end
+      my_each { |item| counter += 1 if item == args }
       return counter
     end
     size
@@ -115,20 +87,12 @@ module Enumerable
   def my_map(args = nil)
     if block_given?
       map_array = []
-      i = 0
-      while i < size
-        map_array.push(yield(at(i)))
-        i += 1
-      end
+      my_each { |item| map_array << yield(item) }
       return map_array
     elsif args != nil
       my_proc = args
       map_array = []
-      i = 0
-      while i < size
-        map_array.push(my_proc.call(at(i)))
-        i += 1
-      end
+      my_each { |item| map_array << my_proc.call(item) }
       return map_array
     end
     self
@@ -139,4 +103,4 @@ def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
 end
 
-puts multiply_els([1, 2, 4, 4])
+puts [1, 2, 4, 4].my_map
