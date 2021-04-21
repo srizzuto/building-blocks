@@ -10,27 +10,35 @@ module Enumerable
   end
 
   def my_each_with_index
-    for i in 0..size - 1
+    i = 0
+    while i < size
       yield(i, at(i))
+      i += 1
     end
   end
 
   def my_select
     selected = []
-    for i in 0..size - 1
+    i = 0
+    while i < size
       selected.push(yield(at(i)))
+      i += 1
     end
     selected
   end
 
   def my_all?
     if block_given?
-      for i in 0..size - 1
+      i = 0
+      while i < size
         unless yield(at(i)) then return false end
+        i += 1
       end
     else
-      for i in 0..size - 1
+      i = 0
+      while i < size
         unless at(i) then return false end
+        i += 1
       end
     end
     true
@@ -39,12 +47,16 @@ module Enumerable
   def my_any?
     unless empty?
       if block_given?
-        for i in 0..size - 1
+        i = 0
+        while i < size
           if yield(at(i)) then return true end
+          i += 1
         end
       else
-        for i in 0..size - 1
+        i = 0
+        while i < size
           if at(i) then return true end
+          i += 1
         end
       end
     end
@@ -54,12 +66,16 @@ module Enumerable
   def my_none?
     unless empty?
       if block_given?
-        for i in 0..size - 1
+        i = 0
+        while i < size
           if yield(at(i)) then return false end
+          i += 1
         end
       else
-        for i in 0..size - 1
+        i = 0
+        while i < size
           if at(i) then return false end
+          i += 1
         end
       end
     end
@@ -69,13 +85,17 @@ module Enumerable
   def my_count(args = nil)
     counter = 0
     if block_given?
-      for i in 0..size - 1
+      i = 0
+      while i < size
         if yield(at(i)) then counter += 1 end
+        i += 1
       end
       return counter
     elsif !args.nil?
-      for i in 0..size - 1
+      i = 0
+      while i < size
         if at(i) == args then counter += 1 end
+        i += 1
       end
       return counter
     end
@@ -84,8 +104,10 @@ module Enumerable
 
   def my_inject(args = 0)
     result = at(args)
-    for i in args + 1..size - 1
+    i = args + 1
+    while i < size
       result = yield(result, at(i))
+      i += 1
     end
     result
   end
@@ -93,15 +115,19 @@ module Enumerable
   def my_map(args = nil)
     if block_given?
       map_array = []
-      for i in 0..size - 1
+      i = 0
+      while i < size
         map_array.push(yield(at(i)))
+        i += 1
       end
       return map_array
     elsif args != nil
       my_proc = args
       map_array = []
-      for i in 0..size - 1
+      i = 0
+      while i < size
         map_array.push(my_proc.call(at(i)))
+        i += 1
       end
       return map_array
     end
@@ -113,13 +139,4 @@ def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
 end
 
-[1, 2, 3].my_each { |element| p element }
-[1, 2, 3].my_each_with_index { |index, element| p "#{element} at #{index}" }
-[1, 2, 3].my_select { |element| unless element == 3 then element end }
-puts [nil, 2, 3].my_all?
-puts [1, 2, 3].my_any? { |element| element == 3 }
-puts [1, 2, 3].my_none? { |element| element == 0 }
-puts [1, 2, 4, 4].my_count { |element| element.even? }
-puts [1, 2, 4, 4].my_map(proc { |element| element * 3 })
-puts [1, 2, 4, 4].my_inject { |sum, n| sum + n }
 puts multiply_els([1, 2, 4, 4])
