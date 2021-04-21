@@ -1,4 +1,4 @@
-# Enumerable Module
+# frozen_string_literal: true
 
 module Enumerable
   def my_each
@@ -95,7 +95,7 @@ module Enumerable
         map_array.push(yield(at(i)))
       end
       return map_array
-    else
+    elsif args != nil
       my_proc = args
       map_array = []
       for i in 0..size - 1
@@ -112,12 +112,12 @@ def multiply_els(array)
 end
 
 [1, 2, 3].my_each { |element| p element }
-[1, 2, 3].my_each_with_index { |index, element|  p "#{element} at #{index}" }
-[1, 2, 3].my_select {|element| unless element == 3 then element end }
+[1, 2, 3].my_each_with_index { |index, element| p "#{element} at #{index}" }
+[1, 2, 3].my_select { |element| unless element == 3 then element end }
 puts [nil, 2, 3].my_all?
-puts [1, 2, 3].my_any? {|element| element == 3 }
-puts [1, 2, 3].my_none? {|element| element == 0 }
-puts [1, 2, 4, 4].my_count {|element| element.even? }
-puts [1, 2, 4, 4].my_map {|element| element * 2 }
-puts [1, 2, 4, 4].my_inject {|sum, n| sum + n }
+puts [1, 2, 3].my_any? { |element| element == 3 }
+puts [1, 2, 3].my_none? { |element| element == 0 }
+puts [1, 2, 4, 4].my_count { |element| element.even? }
+puts [1, 2, 4, 4].my_map(proc { |element| element * 3 })
+puts [1, 2, 4, 4].my_inject { |sum, n| sum + n }
 puts multiply_els([1, 2, 4, 4])
