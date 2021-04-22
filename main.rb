@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop: disable Metrics/ModuleLength
 # rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
@@ -19,7 +21,8 @@ module Enumerable
     i = 0
     arr = to_a
     return enum_for unless block_given?
-    if args == nil
+
+    if args.nil?
       while i < arr.size
         yield(arr.at(i), i)
         i += 1
@@ -48,7 +51,7 @@ module Enumerable
     elsif args.nil?
       my_each { |item| return false if item.nil? || item == false }
     elsif !args.nil? && (args.is_a? Class)
-      my_each { |item| return false if item.class != args && item.class.superclass != args}
+      my_each { |item| return false if item.class != args && item.class.superclass != args }
     elsif !args.nil? && instance_of?(Hash)
       return false unless empty?
     elsif !args.nil? && args.instance_of?(Regexp)
@@ -67,7 +70,7 @@ module Enumerable
       elsif !args.nil? && (args.is_a? String)
         my_each { |item| return true if item == args }
       elsif !args.nil? && (args.is_a? Class)
-        my_each { |item| return true if item.class == args or item.class.superclass == args }
+        my_each { |item| return true if item.instance_of?(args) || (item.class.superclass == args) }
       elsif !args.nil? && instance_of?(Hash)
         return false unless empty?
       elsif !args.nil? && args.instance_of?(Regexp)
@@ -151,8 +154,3 @@ end
 def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
 end
-
-range = Range.new(5, 50) 
-
-puts actual = range.my_inject { |prod, n| prod * n }
-puts expected = range.inject { |prod, n| prod * n }
