@@ -111,25 +111,24 @@ module Enumerable
   end
 
   def my_inject(num = nil, sym = nil)
-    if block_given?
-      result = num
-      my_each do |item|
-        result = result.nil? ? item : yield(result, item)
-      end
-      result
-    elsif !num.nil? && (num.is_a?(Symbol) || num.is_a?(String))
+    if !num.nil? && (num.is_a?(Symbol) || num.is_a?(String))
       result = nil
       my_each do |item|
         result = result.nil? ? item : result.send(num, item)
       end
-      result
+      return result
     elsif !sym.nil? && (sym.is_a?(Symbol) || sym.is_a?(String))
       result = num
       my_each do |item|
         result = result.nil? ? item : result.send(sym, item)
       end
-      result
+      return result
     end
+    result = num
+    my_each do |item|
+    result = result.nil? ? item : yield(result, item)
+    end
+    result
   end
 
   def my_map(args = nil)
