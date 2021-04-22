@@ -109,24 +109,26 @@ module Enumerable
     size
   end
 
-  def my_inject(num = 0, sym = nil)
-    result = num
-    unless block_given?
-      if num.instance_of?(Symbol) || num.instance_of?(String)
-        result = 0
-        my_each { |item| result = item.send(num, result) }
-      elsif num.instance_of?(Proc)
-        result = ""
-        my_each { |item| result = num.call(result, item) }
-      elsif !sym.nil? && sym.instance_of?(Symbol)
-        my_each { |item| result = item.send(sym, result) }
+  def my_inject(num = nil, sym = nil)
+    if block_given?
+      result = num
+      my_each do |item|
+        result = result.nil? ? item : yield(result, item)
       end
-      return result
+      result
+    elsif !num.nil? && (num.is_a?(Symbol) || num.is_a?(String))
+      result = nil
+      my_each do |item|
+        result = result.nil? ? item : result.send(num, item)
+      end
+      result
+    elsif !sym.nil? && (sym.is_a?(Symbol) || sym.is_a?(String))
+      result = num
+      my_each do |item|
+        result = result.nil? ? item : result.send(sym, item)
+      end
+      result
     end
-    return to_a if is_a?(Hash)
-
-    my_each { |item| result = yield(result, item) }
-    result
   end
 
   def my_map(args = nil)
@@ -150,6 +152,7 @@ def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
 end
 
-search = proc { |memo, word| memo.length > word.length ? memo : word }
-p %w[dog door rod blade].inject(&search)
-p %w[dog door rod blade].my_inject(&search)
+range = Range.new(5, 50) 
+
+puts actual = range.my_inject { |prod, n| prod * n }
+puts expected = range.inject { |prod, n| prod * n }
