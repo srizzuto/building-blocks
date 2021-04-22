@@ -15,13 +15,20 @@ module Enumerable
     self
   end
 
-  def my_each_with_index
+  def my_each_with_index(args = nil)
     i = 0
+    arr = to_a
     return enum_for unless block_given?
-
-    arr = to_a if is_a?(Range) || is_a?(Hash)
+    if args == nil
+      while i < arr.size
+        yield(arr.at(i), i)
+        i += 1
+      end
+      return self
+    end
+    my_proc = args
     while i < arr.size
-      yield(arr.at(i), i)
+      my_proc.call(arr.at(i), i)
       i += 1
     end
     self
@@ -41,7 +48,7 @@ module Enumerable
     elsif args.nil?
       my_each { |item| return false if item.nil? || item == false }
     elsif !args.nil? && (args.is_a? Class)
-      my_each { |item| return false if item.class != args }
+      my_each { |item| return false if item.class != args && item.class.superclass != args}
     elsif !args.nil? && instance_of?(Hash)
       return false unless empty?
     elsif !args.nil? && args.instance_of?(Regexp)
@@ -57,14 +64,14 @@ module Enumerable
     unless arr.empty?
       if block_given?
         my_each { |item| return true if yield(item) }
+      elsif !args.nil? && (args.is_a? String)
+        my_each { |item| return true if item == args }
       elsif !args.nil? && (args.is_a? Class)
-        my_each { |item| return true if item.instance_of?(args) }
+        my_each { |item| return true if item.class == args or item.class.superclass == args }
       elsif !args.nil? && instance_of?(Hash)
         return false unless empty?
       elsif !args.nil? && args.instance_of?(Regexp)
         my_each { |item| return true if args.match(item.to_s) }
-      elsif args.nil?
-        my_each { |item| return true if item == args }
       else
         my_each { |item| return true if item }
       end
@@ -108,6 +115,9 @@ module Enumerable
       if num.instance_of?(Symbol) || num.instance_of?(String)
         result = 0
         my_each { |item| result = item.send(num, result) }
+      elsif num.instance_of?(Proc)
+        result = ""
+        my_each { |item| result = num.call(result, item) }
       elsif !sym.nil? && sym.instance_of?(Symbol)
         my_each { |item| result = item.send(sym, result) }
       end
@@ -139,3 +149,7 @@ end
 def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
 end
+
+search = proc { |memo, word| memo.length > word.length ? memo : word }
+p %w[dog door rod blade].inject(&search)
+p %w[dog door rod blade].my_inject(&search)
