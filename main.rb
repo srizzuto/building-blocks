@@ -126,7 +126,7 @@ module Enumerable
     end
     result = num
     my_each do |item|
-    result = result.nil? ? item : yield(result, item)
+      result = result.nil? ? item : yield(result, item)
     end
     result
   end
