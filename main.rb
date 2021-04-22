@@ -1,5 +1,5 @@
+# rubocop: disable Metrics/ModuleLength
 # rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-# frozen_string_literal: true
 
 # Module Enumerable
 module Enumerable
