@@ -113,7 +113,8 @@ module Enumerable
       end
       return result
     end
-    return  to_a if is_a?(Hash) 
+    return  to_a if is_a?(Hash)
+
     my_each { |item| result = yield(result, item) }
     result
   end
@@ -135,6 +136,3 @@ end
 def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
 end
-
-
-puts [3, 3, 3].my_all? {|element| element == 2}
