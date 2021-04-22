@@ -113,7 +113,7 @@ module Enumerable
       end
       return result
     end
-    return  to_a if is_a?(Hash)
+    return to_a if is_a?(Hash)
 
     my_each { |item| result = yield(result, item) }
     result
