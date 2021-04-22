@@ -1,3 +1,4 @@
+# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 # frozen_string_literal: true
 
 # Module Enumerable
@@ -37,7 +38,6 @@ module Enumerable
   def my_all?(args = nil)
     if block_given?
       my_each { |item| return false if yield(item) == false }
-      return true
     elsif args.nil?
       my_each { |item| return false if item.nil? || item == false }
     elsif !args.nil? && (args.is_a? Class)
@@ -105,7 +105,7 @@ module Enumerable
   def my_inject(num = 0, sym = nil)
     result = num
     unless block_given?
-      if n.instance_of?(Symbol) || num.instance_of?(String)
+      if num.instance_of?(Symbol) || num.instance_of?(String)
         result = 0
         my_each { |item| result = item.send(num, result) }
       elsif !sym.nil? && sym.instance_of?(Symbol)
@@ -113,6 +113,7 @@ module Enumerable
       end
       return result
     end
+    return  to_a if is_a?(Hash) 
     my_each { |item| result = yield(result, item) }
     result
   end
@@ -135,5 +136,5 @@ def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
 end
 
-puts (1..5).inject(2, :+)
-puts (1..5).my_inject(2, :+)
+
+puts [3, 3, 3].my_all? {|element| element == 2}
