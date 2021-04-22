@@ -102,23 +102,18 @@ module Enumerable
     size
   end
 
-  def my_inject(n = 0, s = nil)
-    arr = to_a
-    i = 0
-    result = n
+  def my_inject(num = 0, sym = nil)
+    result = num
     unless block_given?
-      if n.instance_of?(Symbol) || n.instance_of?(String)
+      if n.instance_of?(Symbol) || num.instance_of?(String)
         result = 0
-        my_each { |item| result = item.send(n, result) }
-      elsif !s.nil? && s.instance_of?(Symbol)
-        my_each { |item| result = item.send(s, result) }
+        my_each { |item| result = item.send(num, result) }
+      elsif !sym.nil? && sym.instance_of?(Symbol)
+        my_each { |item| result = item.send(sym, result) }
       end
       return result
     end
-    while i < arr.size
-      result = yield(result, arr.at(i))
-      i += 1
-    end
+    my_each { |item| result = yield(result, item) }
     result
   end
 
@@ -127,13 +122,12 @@ module Enumerable
     if !args.nil?
       my_proc = args
       my_each { |item| map_array << my_proc.call(item) }
-      map_array
+      return map_array
     elsif block_given?
       my_each { |item| map_array << yield(item) }
-      map_array
-    else
-      enum_for
+      return map_array
     end
+    enum_for
   end
 end
 
