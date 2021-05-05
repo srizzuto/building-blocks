@@ -19,6 +19,16 @@ Go to https://github.com/srizzuto/bubble-sort/
 5. Open a Pull Request with a detailed description of the development branch of the original project for a review.
 
 
+## Testing cases (rspec)
+
+If you want to test the Enumerables methods, just open your Terminal in the directory where you cloned the repository and execute:
+
+<code>rspec </code>
+
+Or (if you want to practice typing or be more specific):
+
+<code>rspec enumerable_spec.rb</code>
+
 ## Authors
 
 👤 **Sebastian Rizzuto**

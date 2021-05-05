@@ -38,9 +38,16 @@ module Enumerable
   def my_select
     return enum_for unless block_given?
 
-    selected = []
-    my_each { |item| selected << item if yield(item) }
-    selected
+    new_arr = []
+    new_hash = {}
+    my_each do |k, v|
+      if instance_of?(Hash)
+        new_hash.store(k, v) if yield(k, v)
+      elsif yield(k, v) == true
+        new_arr << k if yield(k) == true
+      end
+    end
+    instance_of?(Hash) ? new_hash : new_arr
   end
 
   def my_all?(args = nil)
@@ -80,22 +87,22 @@ module Enumerable
     false
   end
 
-  def my_none?(args = nil)
-    arr = to_a
-    unless arr.empty?
-      if block_given?
-        my_each { |item| return false if yield(item) }
-      elsif !args.nil? && (args.is_a? Class)
-        my_each { |item| return false if item.instance_of?(args) }
-      elsif !args.nil? && args.instance_of?(Regexp)
-        my_each { |item| return false if args.match(item.to_s) }
-      elsif !args.nil?
-        my_each { |item| return false if item == args }
+  def my_none?(*args)
+    if block_given?
+      my_each { |item| return false if yield(item) } == self
+    elsif args.empty?
+      if empty?
+        true
       else
-        my_each { |item| return false if item }
+        my_each do |item|
+          return false unless item.nil? || (item == false)
+        end == self
       end
+    else
+      my_each { |item| return false if item.is_a?(*args) } == self if args[0].instance_of?(Class)
+      my_each { |item| return false if item.to_s.match(args[0]) } == self if args[0].instance_of?(Regexp)
+      my_each { |item| return false if item == args[0] } == self
     end
-    true
   end
 
   def my_count(args = nil)
@@ -110,25 +117,21 @@ module Enumerable
     size
   end
 
-  def my_inject(num = nil, sym = nil)
-    if !num.nil? && (num.is_a?(Symbol) || num.is_a?(String))
-      result = nil
-      my_each do |item|
-        result = result.nil? ? item : result.send(num, item)
+  def my_inject(*args)
+    if block_given? == false
+      raise LocalJumpError, 'no block given' if args.empty?
+
+      accu = args.size < 2 ? to_a[0] : args[0]
+      to_a.my_each_with_index do |_v, i|
+        accu = accu.send(args[0], to_a[i + 1]) if args.size < (2) && !to_a[i + 1].nil?
+        accu = accu.send(args[1], to_a[i]) if args.size >= 2
       end
-      return result
-    elsif !sym.nil? && (sym.is_a?(Symbol) || sym.is_a?(String))
-      result = num
-      my_each do |item|
-        result = result.nil? ? item : result.send(sym, item)
-      end
-      return result
+    else
+      accu = args.empty? ? to_a[0] : args[0]
+      my_each_with_index { |_v, i| accu = yield(accu, to_a[i + 1]) unless to_a[i + 1].nil? } if args.empty?
+      my_each_with_index { |_v, i| accu = yield(accu, to_a[i]) } unless args.empty?
     end
-    result = num
-    my_each do |item|
-      result = result.nil? ? item : yield(result, item)
-    end
-    result
+    accu
   end
 
   def my_map(args = nil)
