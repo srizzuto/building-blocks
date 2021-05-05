@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# rubocop: disable Metrics/ModuleLength, Metrics/MethodLength
-# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
+# rubocop: disable Metrics/ModuleLength
+# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
 # Module Enumerable
 module Enumerable
@@ -150,8 +150,8 @@ module Enumerable
   end
 end
 
-# rubocop: enable Metrics/ModuleLength, Metrics/MethodLength
-# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
+# rubocop: enable Metrics/ModuleLength
+# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
 def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
