@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# rubocop: disable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize
-# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/BlockNesting
+# rubocop: disable Metrics/ModuleLength, Metrics/MethodLength
+# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/BlockNesting, Metrics/AbcSize
 
 # Module Enumerable
 module Enumerable
@@ -90,9 +90,9 @@ module Enumerable
   end
 
   def my_none?(*args)
-    if !block_given?
+    unless block_given?
       if args.empty?
-        if !empty?
+        unless empty?
           my_each do |item|
             return false unless item.nil? || (item == false)
           end == self
@@ -152,8 +152,8 @@ module Enumerable
   end
 end
 
-# rubocop: enable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize
-# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/BlockNesting
+# rubocop: enable Metrics/ModuleLength, Metrics/MethodLength
+# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/BlockNesting, Metrics/AbcSize
 
 def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
