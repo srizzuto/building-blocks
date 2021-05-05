@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop: disable Metrics/ModuleLength, Metrics/MethodLength
-# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/BlockNesting, Metrics/AbcSize
+# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
 
 # Module Enumerable
 module Enumerable
@@ -90,22 +90,20 @@ module Enumerable
   end
 
   def my_none?(*args)
-    unless block_given?
-      if args.empty?
-        unless empty?
-          my_each do |item|
-            return false unless item.nil? || (item == false)
-          end == self
-        else
-          true
-        end
+    if block_given?
+      my_each { |item| return false if yield(item) } == self
+    elsif args.empty?
+      if empty?
+        true
       else
-        my_each { |item| return false if item.is_a?(*args) } == self if args[0].instance_of?(Class)
-        my_each { |item| return false if item.to_s.match(args[0]) } == self if args[0].instance_of?(Regexp)
-        my_each { |item| return false if item == args[0] } == self
+        my_each do |item|
+          return false unless item.nil? || (item == false)
+        end == self
       end
     else
-      my_each { |item| return false if yield(item) } == self
+      my_each { |item| return false if item.is_a?(*args) } == self if args[0].instance_of?(Class)
+      my_each { |item| return false if item.to_s.match(args[0]) } == self if args[0].instance_of?(Regexp)
+      my_each { |item| return false if item == args[0] } == self
     end
   end
 
@@ -153,7 +151,7 @@ module Enumerable
 end
 
 # rubocop: enable Metrics/ModuleLength, Metrics/MethodLength
-# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/BlockNesting, Metrics/AbcSize
+# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
 
 def multiply_els(array)
   array.my_inject { |multi, n| multi * n }
